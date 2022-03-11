@@ -4,6 +4,9 @@
 
 @section('content')
 <table class="table">
+    <a href="{{route('comics.create')}}">
+        <button type="button" class="btn btn-success">Aggiungi fumetto</button>
+    </a>
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -27,6 +30,19 @@
                 <td>{{$comic->series}}</th>
                 <td>{{$comic->sale_date}}</th>
                 <td>{{$comic->type}}</th>
+                <td>
+                    <a href="{{route('comics.show', $comic->id)}}">
+                        <button type="button" class="btn btn-primary">Information</button>
+                    </a>
+                    <a href="{{route('comics.edit', $comic->id)}}">
+                        <button type="button" class="btn btn-warning">Edit</button>
+                    </a>
+                    <form method="post" action="{{route('comics.destroy', $comic->id)}}">
+                        @method("DELETE")
+                        @csrf
+                        <button type="submit" class="btn btn-danger">Cancel</button>
+                    </form>
+                </th>
             </tr>
             @endforeach
 
