@@ -6,6 +6,8 @@ use  App\Comic;
 
 use Illuminate\Http\Request;
 
+use Illuminate\Validation\Rule;
+
 class ComicController extends Controller
 {
     /**
@@ -37,9 +39,19 @@ class ComicController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'title' => 'required|string|unique:comics|max:50',
+            'description' => 'required|string|unique:comics',
+            'thumb' => 'nullable|url|max:255',
+            'price' => 'required|numeric|min:0|max:1000',
+            'series' => 'required|string|max:50',
+            'sale_date' => 'required|date',
+            'type' => 'required|string|max:50', Rule::in(['Comic book', 'Graphic novel'])
+        ]);
+        
         $data = $request->all();
 
-        $newComic = new Comic;
+        /* $newComic = new Comic;
         $newComic->title = $data["title"];
         $newComic->description = $data["description"];
         $newComic->thumb = $data["thumb"];
@@ -47,7 +59,12 @@ class ComicController extends Controller
         $newComic->series = $data["series"];
         $newComic->sale_date = $data["sale_date"];
         $newComic->type = $data["type"];
-        $newComic->save();
+        $newComic->save(); */
+
+
+        //si potrebbe commentare tutta la parte sopra (tranne riga 40)
+        //e aggiungere riga 55
+        $newComic = Comic::create($data);
 
         return redirect()->route('comics.show', $newComic->id);
     }
@@ -83,16 +100,28 @@ class ComicController extends Controller
      */
     public function update(Request $request, Comic $comic)
     {
+        $request->validate([
+            'title' => 'required|string|unique:comics,title,{$comic->id}|max:50',
+            'description' => 'required|string',
+            'thumb' => 'nullable|url|max:255',
+            'price' => 'required|numeric|min:0|max:1000',
+            'series' => 'required|string|max:50',
+            'sale_date' => 'required|date',
+            'type' => 'required|string|max:50', Rule::in(['Comic book', 'Graphic novel'])
+        ]);
+
         $data=$request->all();
 
-        $comic->title = $data["title"];
+        /* $comic->title = $data["title"];
         $comic->description = $data["description"];
         $comic->thumb = $data["thumb"];
         $comic->price = $data["price"];
         $comic->series = $data["series"];
         $comic->sale_date = $data["sale_date"];
         $comic->type = $data["type"];
-        $comic->save();
+        $comic->save(); */
+
+        $comic->update($data);
 
         return redirect()->route('comics.show', $comic->id);  
     }
